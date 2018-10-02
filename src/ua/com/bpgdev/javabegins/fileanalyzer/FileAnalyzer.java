@@ -1,9 +1,10 @@
 package ua.com.bpgdev.javabegins.fileanalyzer;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileAnalyzer {
@@ -15,18 +16,18 @@ public class FileAnalyzer {
         String pathToTextFile = args[0];
         String searchWord = args[1];
 
-        String text = readFromFile(pathToTextFile);
+        String text = read(pathToTextFile);
 
         int searchWordCount = wordsCount(text, searchWord);
         System.out.println("Word " + searchWord + " was found in text " + searchWordCount + " time(s).");
 
-        ArrayList<String> sentences = findSentences(text, searchWord);
+        List<String> sentences = findSentences(text, searchWord);
         for (String sentence : sentences) {
             System.out.println(sentence);
         }
     }
 
-    private static String readFromFile(String pathToTextFile) throws IOException {
+    private static String read(String pathToTextFile) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         String stringLine;
 
@@ -43,18 +44,19 @@ public class FileAnalyzer {
         return (int) Stream.of(text.split(regexpSplitString)).filter(word -> word.equals(searchWord)).count();
     }
 
-    public static ArrayList<String> findSentences(String text, String searchWord) {
+    public static List<String> findSentences(String text, String searchWord) {
 
-        ArrayList<String> stringArrayList = new ArrayList<>();
+         //= new ArrayList<>();
 
         String regexpSplitString = "(?<=\\.)|(?<=\\?)|(?<=!)";
         Pattern searchPattern = Pattern.compile(searchWord);
 
-        Stream.of(text.split(regexpSplitString)).filter(sentence -> {
+        List<String> stringArrayList = Stream.of(text.split(regexpSplitString)).filter(sentence -> {
             Matcher matcher = searchPattern.matcher(sentence);
             return matcher.find();
-        }).forEach(sentence ->
-                stringArrayList.add(sentence.trim()));
+        }).collect(Collectors.toList());
+                //forEach(sentence ->
+                //stringArrayList.add(sentence.trim()));
 
         return stringArrayList;
     }

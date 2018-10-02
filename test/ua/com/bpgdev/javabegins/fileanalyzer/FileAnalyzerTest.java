@@ -4,10 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import static org.junit.Assert.*;
 
@@ -22,11 +19,8 @@ public class FileAnalyzerTest {
 
     @Before
     public void before() throws IOException {
-        OutputStream outputStream = new FileOutputStream(path);
-
-        byte[] bytes = content.getBytes();
-        for (byte aByte : bytes) {
-            outputStream.write(aByte);
+        try (FileWriter fileWriter = new FileWriter(path)) {
+            fileWriter.write(content);
         }
     }
 
@@ -42,13 +36,10 @@ public class FileAnalyzerTest {
 
     @After
     public void after() throws IOException {
-        // Why is the file not deleted by this code?
         File testFile = new File("test.txt");
         if (testFile.exists()) {
             if (!testFile.delete()) {
-                testFile.createNewFile();
-                testFile.delete();
-
+                System.out.println("All temporary files are deleted.");
             }
         }
     }
